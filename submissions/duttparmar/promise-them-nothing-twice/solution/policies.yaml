@@ -1,0 +1,28 @@
+# Commercial + engineering policy. The limiter has no customer-id branches.
+# Exceptions are time-bounded effective quotas, named and auditable.
+
+window_seconds: 60
+
+customers:
+  acme:
+    contracted_rpm: 100
+    exceptions: []
+
+  globex:
+    contracted_rpm: 100
+    exceptions: []
+
+  # Stand-in for Northwind Logistics. Contracted Enterprise RPM is 300.
+  # Nightly batch (02:00–04:00 UTC) is a commercial exception, not a code bypass.
+  northwind:
+    contracted_rpm: 300
+    exceptions:
+      - id: northwind-nightly-batch
+        reason: >-
+          Temporary commercial exception for renewal-critical nightly batch.
+          Authorized effective RPM covers observed 800–1200 RPM load.
+          Invisible to the customer (same 200 path); visible internally via
+          X-Relay-Quota-Policy and coordinator audit counters.
+        start_utc: "02:00"
+        end_utc: "04:00"
+        effective_rpm: 1200
